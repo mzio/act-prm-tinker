@@ -1,0 +1,34 @@
+[project]
+name = "act-prm"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "mzio", email = "mzhang2016@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "bm25s>=0.2.14",
+    "datasets>=4.4.2",
+    "matplotlib>=3.10.8",
+    "omegaconf>=2.3.0",
+    "pandas>=2.3.3",
+    "peft>=0.18.1",
+    "pystemmer>=3.0.0",
+    "python-dotenv>=1.2.1",
+    "rich>=14.2.0",
+    "tinker>=0.7.0",
+    "tinker-cookbook>=0.1.0",
+    "torch>=2.9.1",
+    "transformers>=4.57.3",
+    "wandb>=0.23.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.22,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.1.0",
+]

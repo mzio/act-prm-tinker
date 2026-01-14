@@ -1,0 +1,49 @@
+name: browsecomp_plus_search
+is_async: true
+dataset_config:
+  path: "Tevatron/browsecomp-plus-corpus"
+  cache_dir: "/scr/mzhang/data/browsecomp_plus_v2"
+  split: "train"
+
+pretrained_model_config:
+  pretrained_model_name_or_path: "Qwen/Qwen3-4B-Instruct-2507"
+  cache_dir: "/scr/mzhang/models"
+
+search_tool_config:
+  retriever_name: "bm25_index"
+  use_stemmer: true
+  retriever_config:
+    method: "lucene"
+    k1: 1.5
+    b: 0.75
+    delta: 0.5
+  save_path: "/scr/mzhang/data/browsecomp_plus_v2"
+
+max_preview_tokens: 204
+doc_chunk_size: 1024
+
+num_train_samples: 700
+num_val_samples: 30
+num_test_samples: 100
+
+max_turns: 20
+num_tries: 1
+seed: 0
+split: "train"
+system_prompt: "You are a helpful assistant that can answer questions and call tools."
+truncation_message: "Sorry, you have reached the maximum number of steps. Please try again."
+verbose: false
+
+grader_model_config:
+  name: "hf_transformer"
+  is_async: false
+  model_config:
+    pretrained_model_name_or_path: "Qwen/Qwen3-8B"
+    cache_dir: "/scr/mzhang/models"
+    device_map: "auto"
+    low_cpu_mem_usage: true
+    dtype: "bfloat16"
+    # Override chat template (include {% generation %} keyword)
+    chat_template_path: "/scr/mzhang/projects/act-prm-tinker/chat_templates/qwen3_8b.jinja"
+grader_model_samples: 1
+grader_model_verbose: true

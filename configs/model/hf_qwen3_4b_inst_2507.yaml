@@ -1,0 +1,17 @@
+name: "hf_transformer"
+model_type: "huggingface"
+model_config:
+  pretrained_model_name_or_path: "Qwen/Qwen3-4B-Instruct-2507"
+  cache_dir: "/scr/mzhang/models"
+  device_map: "auto"
+  low_cpu_mem_usage: true
+  dtype: "bfloat16"
+  # Override chat template (include {% generation %} keyword)
+  chat_template_path: "./chat_templates/qwen3_4b_inst_2507.jinja"
+
+generation_config:
+  do_sample: true
+  temperature: 0.7
+  # top_k: 20
+  # top_p: 0.95
+  # min_p: 0.

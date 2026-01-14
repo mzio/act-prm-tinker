@@ -1,0 +1,4 @@
+# Default Tinker Generator
+name: "tinker_default"
+discount_factor: 0.9
+verbose: false

@@ -1,0 +1,52 @@
+"""
+Prompt (templates) for HotpotQA multiple choice environment
+"""
+
+FEWSHOT_PROMPTS = [
+    [{'role': 'user', 'content': "## Instruction\nGiven a list of titles, think and call tools to answer this question:\n'''\nWhich documentary is about Finnish rock groups, Adam Clayton Powell or The Saimaa Gesture?\n'''\n\nYou may only visit the titles provided. Only call the `visit` tool once per turn.\n\nYour final answer should be a concise sentence, in the following format: 'Final Answer: <put your answer here>'.\n\n## Tool Calling\nYou can only search the following titles:\n\n- 'Adam (musical)'\n- 'Adam Clayton Powell (film)'\n- 'Adam Clayton Powell Jr.'\n- 'Adam Clayton Powell IV'\n- 'Seventh Avenue (Manhattan)'\n- 'Mother African Methodist Episcopal Zion Church'\n- 'Abyssinian Baptist Church'\n- 'Adam Clayton Powell Jr. State Office Building'\n- 'The Saimaa Gesture'\n- 'Adam Clayton Powell Sr.'\n\n## Instruction (again)\nNow answer the original question. Recall the question is:\n'''\nWhich documentary is about Finnish rock groups, Adam Clayton Powell or The Saimaa Gesture?\n'''\n\nVERY IMPORTANT: You may only use the provided `visit` tool once per turn, and only use the given titles to answer this question. If you provide a title not in the given titles, the tool call will fail."}, {'role': 'assistant', 'content': 'I need to search Adam Clayton Powell and The Saimaa Gesture, and find which documentary is about Finnish rock groups.\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "Adam Clayton Powell"}}\n</tool_call>'}, {'role': 'tool', 'content': "Could not find [Adam Clayton Powell]. Similar: ['Adam Clayton Powell III', 'Seventh Avenue (Manhattan)', 'Adam Clayton Powell Jr. State Office Building', 'Isabel Washington Powell', 'Adam Powell', 'Adam Clayton Powell (film)', 'Giancarlo Esposito']."}, {'role': 'assistant', 'content': 'To find the documentary, I can search Adam Clayton Powell (film).\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "Adam Clayton Powell (film)"}}\n</tool_call>'}, {'role': 'tool', 'content': 'Adam Clayton Powell is a 1989 American documentary film directed by Richard Kilberg.'}, {'role': 'assistant', 'content': 'Adam Clayton Powell (film) is a documentary about an African-American politician, not Finnish rock groups. So the documentary about Finnish rock groups must instead be The Saimaa Gesture.\n\nFinal Answer: The Saimaa Gesture'}, {'role': 'user', 'content': '# RESULT: CORRECT!'}],
+    [{'role': 'user', 'content': "## Instruction\nGiven a list of titles, think and call tools to answer this question:\n'''\nWhat profession does Nicholas Ray and Elia Kazan have in common?\n'''\n\nYou may only visit the titles provided. Only call the `visit` tool once per turn.\n\nYour final answer should be a concise sentence, in the following format: 'Final Answer: <put your answer here>'.\n\n## Tool Calling\nYou can only search the following titles:\n\n- 'Baby Doll'\n- 'Nicholas Ray'\n- 'Elia Kazan'\n- 'Art &amp; Gadg'\n- 'A Letter to Elia'\n- 'The Visitors (1972 film)'\n- 'Truckline Cafe'\n- 'All My Sons'\n- 'Maya Kazan'\n- 'Macao (film)'\n\n## Instruction (again)\nNow answer the original question. Recall the question is:\n'''\nWhat profession does Nicholas Ray and Elia Kazan have in common?\n'''\n\nVERY IMPORTANT: You may only use the provided `visit` tool once per turn, and only use the given titles to answer this question. If you provide a title not in the given titles, the tool call will fail."}, {'role': 'assistant', 'content': 'I need to search Nicholas Ray and Elia Kazan, find their professions, then find the profession they have in common.\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "Nicholas Ray"}}\n</tool_call>'}, {'role': 'tool', 'content': 'Nicholas Ray (born Raymond Nicholas Kienzle Jr., August 7, 1911 – June 16, 1979) was an American film director, screenwriter, and actor best known for the 1955 film Rebel Without a Cause.'}, {'role': 'assistant', 'content': 'Professions of Nicholas Ray are director, screenwriter, and actor. I need to search Elia Kazan next and find his professions.\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "Elia Kazan"}}\n</tool_call>'}, {'role': 'tool', 'content': 'Elia Kazan was an American film and theatre director, producer, screenwriter and actor.'}, {'role': 'assistant', 'content': 'Professions of Elia Kazan are director, producer, screenwriter, and actor. So profession Nicholas Ray and Elia Kazan have in common is director, screenwriter, and actor.\n\nFinal Answer: director, screenwriter, actor'}, {'role': 'user', 'content': '# RESULT: CORRECT!'}],
+    [{'role': 'user', 'content': "## Instruction\nGiven a list of titles, think and call tools to answer this question:\n'''\nWhich magazine was started first Arthur's Magazine or First for Women?\n'''\n\nYou may only visit the titles provided. Only call the `visit` tool once per turn.\n\nYour final answer should be a concise sentence, in the following format: 'Final Answer: <put your answer here>'.\n\n## Tool Calling\nYou can only search the following titles:\n\n- 'Radio City (Indian radio station)'\n- 'History of Albanian football'\n- 'Echosmith'\n- 'Women's colleges in the Southern United States'\n- 'First Arthur County Courthouse and Jail'\n- 'Arthur's Magazine'\n- '2014–15 Ukrainian Hockey Championship'\n- 'First for Women'\n- 'Freeway Complex Fire'\n- 'William Rast'\n\n## Instruction (again)\nNow answer the original question. Recall the question is:\n'''\nWhich magazine was started first Arthur's Magazine or First for Women?\n'''\n\nVERY IMPORTANT: You may only use the provided `visit` tool once per turn, and only use the given titles to answer this question. If you provide a title not in the given titles, the tool call will fail."}, {'role': 'assistant', 'content': 'I need to search Arthur\'s Magazine and First for Women, and find which was started first.\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "Arthur\'s Magazine"}}\n</tool_call>'}, {'role': 'tool', 'content': "Arthur's Magazine (1844-\x80\x931846) was an American literary periodical published in Philadelphia in the 19th century."}, {'role': 'assistant', 'content': 'Arthur\'s Magazine was started in 1844. I need to search First for Women next.\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "First for Women"}}\n</tool_call>'}, {'role': 'tool', 'content': "First for Women is a woman's magazine published by Bauer Media Group in the USA.[1] The magazine was started in 1989."}, {'role': 'assistant', 'content': "First for Women was started in 1989. 1844 (Arthur's Magazine) < 1989 (First for Women), so Arthur's Magazine was started first.\n\nFinal Answer: Arthur's Magazine"}, {'role': 'user', 'content': '# RESULT: CORRECT!'}],
+    [{'role': 'user', 'content': "## Instruction\nGiven a list of titles, think and call tools to answer this question:\n'''\nWere Pavel Urysohn and Leonid Levin known for the same type of work?\n'''\n\nYou may only visit the titles provided. Only call the `visit` tool once per turn.\n\nYour final answer should be a concise sentence, in the following format: 'Final Answer: <put your answer here>'.\n\n## Tool Calling\nYou can only search the following titles:\n\n- 'Leonid Ramzin'\n- 'Leftover hash lemma'\n- 'Phthinosaurus'\n- 'Kate Dillon Levin'\n- 'Tony Levin'\n- 'Gabriel Levin'\n- 'Leonid Levin'\n- 'Pavel Urysohn'\n- 'Meyer Levin'\n- 'Leonid Bunimovich'\n\n## Instruction (again)\nNow answer the original question. Recall the question is:\n'''\nWere Pavel Urysohn and Leonid Levin known for the same type of work?\n'''\n\nVERY IMPORTANT: You may only use the provided `visit` tool once per turn, and only use the given titles to answer this question. If you provide a title not in the given titles, the tool call will fail."}, {'role': 'assistant', 'content': 'I need to search Pavel Urysohn and Leonid Levin, find their types of work, then find if they are the same.\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "Pavel Urysohn"}}\n</tool_call>'}, {'role': 'tool', 'content': 'Pavel Samuilovich Urysohn (February 3, 1898 â\x80\x93 August 17, 1924) was a Soviet mathematician who is best known for his contributions in dimension theory.'}, {'role': 'assistant', 'content': 'Pavel Urysohn is a mathematician. I need to search Leonid Levin next and find its type of work.\n\n<tool_call>\n{"name": "visit", "arguments": {"title": "Leonid Levin"}}\n</tool_call>'}, {'role': 'tool', 'content': 'Leonid Anatolievich Levin is a Soviet-American mathematician and computer scientist.'}, {'role': 'assistant', 'content': 'Leonid Levin is a mathematician and computer scientist. So Pavel Urysohn and Leonid Levin have the same type of work.\n\nFinal Answer: yes'}, {'role': 'user', 'content': '# RESULT: CORRECT!'}],
+]
+
+
+def render_prompt(
+    question: str,
+    all_titles: list[str],
+    include_titles_in_prompt: bool = True,
+) -> str:
+    """
+    Render prompt for HotpotQA multiple choice environment
+
+    Args:
+    - question (str): The question to answer
+    - all_titles (list[str]): The list of titles to choose from
+    - include_titles_in_prompt (bool): If True, specify the valid titles in the prompt
+      (redundant if we specify these in the tool description)
+
+    Returns:
+    - prompt (str): The prompt to be used for the model
+    """
+    initial_msg = (
+        f"## Instruction\nGiven a list of titles, think and call tools to answer this question:"
+        f"\n'''\n{question}\n'''"
+        f"\n\nYou may only visit the titles provided. Only call the `visit` tool once per turn."
+        "\n\nYour final answer should be a concise sentence, in the following format: "
+        "'Final Answer: <put your answer here>'."
+    )
+    final_msg = (
+        f"\n\n## Instruction (again)\nNow answer the original question. Recall the question is:"
+        f"\n'''\n{question}\n'''"
+        f"\n\nVERY IMPORTANT: You may only use the provided `visit` tool once per turn, and only"
+        " use the given titles to answer this question. If you provide a title not in the given"
+        " titles, the tool call will fail."
+    )
+    if include_titles_in_prompt:
+        tool_msg = (
+            "\n\n## Tool Calling\n"
+            "You can only search the following titles:\n"
+            "\n- " + "\n- ".join([f"'{t}'" for t in all_titles])
+        )
+    else:
+        tool_msg = ""
+    return f"{initial_msg}{tool_msg}{final_msg}"

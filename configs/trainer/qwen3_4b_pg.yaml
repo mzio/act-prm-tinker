@@ -1,0 +1,42 @@
+# Default Policy Gradient training config
+model_name: "Qwen/Qwen3-4B-Instruct-2507"
+renderer_name: null
+stop_condition: null
+lora_rank: 32
+
+tool_call_kwargs:
+  tool_call_bos: "<tool_call>"
+  tool_call_eos: "</tool_call>"
+  tool_call_argname: "arguments"
+
+# Generation (Sampling Rollouts)
+num_tries: 1
+eval_num_tries: 1
+max_tokens: 2048
+temperature: 1.0
+
+batch_size: 16
+group_size: 8
+eval_group_size: 1
+
+# Training (Policy Updates)
+num_batches: 1000
+learning_rate: 4e-5
+discount_factor: 0.9
+loss_fn: "importance_sampling"
+num_substeps: 1
+
+compute_post_kl: false
+kl_penalty_coef: 0.0
+kl_discount_factor: 0.0
+
+eval_every: 20
+save_every: 20
+
+# Other miscellaneous
+base_url: null
+log_path: "./logs"
+load_checkpoint_path: null
+
+wandb_project: null  # will set based on project_name
+wandb_name: null     # will set based on run name

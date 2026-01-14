@@ -1,0 +1,3 @@
+# Default Replay Buffer
+name: "default"
+max_size: 1e10
