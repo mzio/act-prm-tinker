@@ -31,6 +31,22 @@ def get_args() -> argparse.Namespace:
     parser.add_argument("--model_name", type=str)
     parser.add_argument("--lora_rank", type=int)
 
+    ## Evaluation / Eval Environment
+    parser.add_argument(
+        "--eval_env_config",
+        type=str,
+        help=(
+            "Evaluation environment config. If unspecified, defaults to env_config "
+            "(but we use different splits for evaluation, i.e., from the 'eval' split)"
+        )
+    )
+    parser.add_argument(
+        "--best_metric",
+        type=str,
+        default="correct",
+        help="Metric to save best checkpoints on",
+    )
+
     ## Tinker logging + checkpointing
     parser.add_argument("--base_url", type=str, help="Tinker base URL")
     parser.add_argument(
@@ -38,11 +54,19 @@ def get_args() -> argparse.Namespace:
         type=str,
         default="./logs",
         help=(
-            "Parent directory for logging and saving checkpoints. The actual path is "
-            "automatically generated (and created) based on the experiment arguments."
+            "Parent directory for logging and saving Tinker checkpoints. Actual path is "
+            "automatically determined (and created) based on our specified argparse args"
         )
     )
-    parser.add_argument("--load_checkpoint_path", type=str, help="Path to load checkpoint from")
+    parser.add_argument(
+        "--checkpoint_path",
+        type=str,
+        help=(
+            "Parent directory for saving other checkpoints and data (e.g., replay buffer samples)"
+            ". Similar to above, actual path is automatically determined (and created)"
+        )
+    )
+    parser.add_argument("--load_checkpoint_path", type=str, help="Path to load Tinker checkpoint")
 
     ## Number of tries we allow to solve each task
     parser.add_argument(
@@ -103,6 +127,16 @@ def get_args() -> argparse.Namespace:
             "By default, we adjust total_episode_steps to be a multiple of `num_substeps`."
         )
     )
+    parser.add_argument(
+        "--mini_batch_size",
+        type=int,
+        help=(
+            "Alternative to --num_substeps; size of each mini-batch during updates. "
+            "If specified and num_substeps is None, then we set num_substeps = "
+            "total_episode_steps // mini_batch_size. If both specified, then we (super)sample the "
+            "training data s.t. len(training_data) = mini_batch_size * num_substeps."
+        )
+    )
 
     ## Miscellaneous
     parser.add_argument("--eval_every", type=int, help="Iters to evaluate, 0 = disabled")
@@ -132,21 +166,25 @@ def get_args() -> argparse.Namespace:
     args.run_name = get_run_name(args, prefix=args.project_name, ignore_args=_ignore_args)
     logger.info("Run name: %s", args.run_name)
 
-    # Setup log path -> construct as args.log_path/args.env_config/model_name/args.run_name/
+    # Setup log path and checkpoint / data-saving path
+    # -> construct as args.log_path/args.env_config/model_name/args.run_name/
+    # -> similar for checkpointing
     created_dir = False
     _model_name = OmegaConf.load(f"./configs/trainer/{args.trainer_config}.yaml")["model_name"]
     _model_name = args.model_name or _model_name
     _model_name = _model_name.split("/")[-1].replace("-", "_")
     _env_config = args.env_config.replace("/", "_")
-    for new_dir in [_env_config, _model_name, args.run_name]:
-        args.log_path = os.path.join(args.log_path, new_dir)
-        if not os.path.exists(args.log_path):
-            os.makedirs(args.log_path)
-            created_dir = True
-    if created_dir:
-        logger.info("Created args.log_path at: %s", args.log_path)
-    else:
-        logger.info("Using args.log_path at: %s", args.log_path)
+
+    for argname in ["log_path", "checkpoint_path"]:
+        for new_dir in [_env_config, _model_name, args.run_name]:
+            setattr(args, argname, os.path.join(args.log_path, new_dir))
+            if not os.path.exists(getattr(args, argname)):
+                os.makedirs(getattr(args, argname))
+                created_dir = True
+        if created_dir:
+            logger.info("Created %s at: %s", argname, getattr(args, argname))
+        else:
+            logger.info("Using %s at: %s", argname, getattr(args, argname))
 
     # Setup tinker-cookbook WandB logging
     args.wandb_project = args.project_name

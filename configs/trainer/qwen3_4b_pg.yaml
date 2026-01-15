@@ -10,6 +10,7 @@ tool_call_kwargs:
   tool_call_argname: "arguments"
 
 # Generation (Sampling Rollouts)
+num_batches: 1000
 num_tries: 1
 eval_num_tries: 1
 max_tokens: 2048
@@ -20,23 +21,27 @@ group_size: 8
 eval_group_size: 1
 
 # Training (Policy Updates)
-num_batches: 1000
 learning_rate: 4e-5
 discount_factor: 0.9
 loss_fn: "importance_sampling"
 num_substeps: 1
+mini_batch_size: null
 
 compute_post_kl: false
 kl_penalty_coef: 0.0
 kl_discount_factor: 0.0
 
+# Checkpointing
 eval_every: 20
 save_every: 20
+best_metric: "correct"
 
 # Other miscellaneous
 base_url: null
 log_path: "./logs"
 load_checkpoint_path: null
+# Local parent dir for other checkpoints and data (e.g., replay buffer samples, etc.)
+checkpoint_path: "./checkpoints"
 
 wandb_project: null  # will set based on project_name
 wandb_name: null     # will set based on run name

@@ -63,11 +63,10 @@ def split_list(lst: Sequence[T], num_splits: int) -> list[list[T]]:
     return [list(lst[edges[i] : edges[i + 1]]) for i in range(num_splits)]
 
 
-# Copied from https://github.com/thinking-machines-lab/tinker-cookbook/blob/22483a6b04400f79da13557a8229bc98b309b026/tinker_cookbook/rl/train.py#L53
+# Modified from https://github.com/thinking-machines-lab/tinker-cookbook/blob/22483a6b04400f79da13557a8229bc98b309b026/tinker_cookbook/rl/train.py#L53
 async def gather_with_progress(
     coroutines: Iterable[Coroutine[Any, Any, T]],
-    desc: str,
-    colour: str | None = None,
+    **pbar_kwargs: Any,
 ) -> list[T]:
     """
     Run coroutines concurrently with a progress bar that updates as each completes.
@@ -76,7 +75,7 @@ async def gather_with_progress(
     real-time progress feedback as individual coroutines complete.
     """
     coroutine_list = list(coroutines)
-    pbar = tqdm(total=len(coroutine_list), desc=desc, colour=colour)
+    pbar = tqdm(total=len(coroutine_list), **pbar_kwargs)
 
     async def track(coro: Coroutine[Any, Any, T]) -> T:
         result = await coro

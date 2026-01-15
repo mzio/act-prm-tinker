@@ -2,7 +2,10 @@
 Default replay buffer for storing training samples
 """
 
+import asyncio
 from typing import Any
+
+from datasets import Dataset
 
 from .types import EpisodeStep, Trajectory, TrajectoryGroup
 
@@ -50,3 +53,20 @@ class ReplayBuffer:
         """
         for trajectory in trajectory_group.trajectories:
             self.add_trajectory(trajectory)
+
+    def save_to_hf_dataset(self, save_path: str) -> None:
+        """
+        Save all samples in self.buffer to a Hugging Face dataset
+        """
+        Dataset.from_list(self.buffer).save_to_disk(save_path)
+
+    async def save_to_hf_dataset_async(self, save_path: str) -> None:
+        """
+        Save all samples in self.buffer to a Hugging Face dataset asynchronously
+        """
+        data = list(self.buffer)
+        
+        def _save():
+            Dataset.from_list(data).save_to_disk(save_path)
+        
+        await asyncio.to_thread(_save)

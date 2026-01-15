@@ -63,13 +63,20 @@ async def main() -> None:
     generator_cfg     = OmegaConf.load(f"./configs/generator/{args.generator_config}.yaml")
     trainer_cfg       = OmegaConf.load(f"./configs/trainer/{args.trainer_config}.yaml")
     replay_buffer_cfg = OmegaConf.load(f"./configs/replay_buffer/{args.replay_buffer_config}.yaml")
+    
+    if args.eval_env_config is not None:
+        eval_env_cfg = OmegaConf.load(f"./configs/environments/{args.eval_env_config}.yaml")
+    else:
+        eval_env_cfg = env_cfg
 
     # Consolidate + update configs from args
-    updated_cfgs = update_configs(args, env_cfg, generator_cfg, trainer_cfg, replay_buffer_cfg)
+    updated_cfgs = update_configs(
+        args, env_cfg, eval_env_cfg, generator_cfg, trainer_cfg, replay_buffer_cfg,
+    )
     if args.verbose:
         for cfg in updated_cfgs:
             print_config(cfg)
-    env_cfg, generator_cfg, trainer_cfg, replay_buffer_cfg = updated_cfgs
+    env_cfg, eval_env_cfg, generator_cfg, trainer_cfg, replay_buffer_cfg = updated_cfgs
     cfg = trainer_cfg  # Main config to reference (has all Tinker training attributes)
 
     ml_logger = ml_log.setup_logging(
@@ -109,7 +116,8 @@ async def main() -> None:
 
     # Get environment, replay buffer, and generator class
     env = get_env(**env_cfg)
-    eval_env = env  # Same environment; we just specify the split for loading new tasks
+    # Reuse env if eval_env not specified; we always specify the split for loading new tasks
+    eval_env = get_env(**eval_env_cfg) if args.eval_env_config else env
     replay_buffer = get_replay_buffer(**replay_buffer_cfg)
     generator_ctor = get_generator_constructor(**generator_cfg, ml_logger=ml_logger)
 

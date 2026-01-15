@@ -228,7 +228,7 @@ class TinkerGenerator:
         self,
         num_return_sequences: int,
         **single_rollout_kwargs: Any,
-    ) -> list[TrajectoryGroup]:
+    ) -> dict[str, list[TrajectoryGroup]]:
         """
         Generate a group of trajectories in the environment, and return a list of the trajectory
         group(s).
@@ -244,13 +244,14 @@ class TinkerGenerator:
             ],
         )
         # final_rewards_in_group: list[float] = [t.final_reward for t in trajectories_in_group]
-        return [
+        all_trajectory_groups = [
             self._get_trajectory_group(
                 trajectories=trajectories_in_group, 
                 # final_rewards=final_rewards_in_group,
                 discount_factor=self.discount_factor,
             )
         ]
+        return {"policy": all_trajectory_groups}
 
     def display_state_action_next_obs(self,
         state_messages: list[dict[str, Any]],

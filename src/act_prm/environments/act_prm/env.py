@@ -4,11 +4,12 @@ Action Process Reward Environments
 We train LLMs to generate thoughts that lead to observed actions with high-likelihoods,
 where reward = p(observed_action | thought).
 
-We do this via two environments.
-1. `ActionFirstProcessRewardEnv`: To bootstrap generations, we first give the ground-truth
-   action to the LLM first, and ask it to generate the thought that leads to that action.
+Based on the Generator, we do this via two setups:
 
-2. `ActionProcessRewardEnv`: We can then optionally train the LLM to generate thoughts
+1. `TinkerActionPromptActPrmGenerator`: To bootstrap generations, we first give the ground-truth
+   action to the LLM first, and ask it to generate the thought that leads to that action.
+   
+2. `TinkerActPrmGenerator`: We can then optionally train the LLM to generate thoughts
     based on just the present state (i.e., it does not see the action as a hint).
 """
 
@@ -29,7 +30,7 @@ from .utils import (
 
 SYSTEM_PROMPT = {
     "role": "system",
-    "content": "You are a helpful assistant that infers latent thoughts behind observed actions."
+    "content": "You are a helpful assistant that infers reasoning thoughts behind observed actions."
 }
 
 THOUGHT_ACTION_FEWSHOT_PROMPTS = [
@@ -242,8 +243,6 @@ class ActPrmEnv(Environment):
         generation_id = current_state.generation_id
         batch_id = current_state.batch_id
 
-        # Create environment response
-
         # Update timesteps, fail if too many turns
         timestep += 1
         if timestep >= self.max_turns:
@@ -268,19 +267,20 @@ class ActPrmEnv(Environment):
                 "content": f"{thought_text}\n\n{action_target}"
             }
             # 2. Add next_obs and next_action as new messages
-            new_messages = [
+            env_messages = [
                 action_trajectory[chat_step_idx + t] for t in range(2)
             ]
-            action_target = new_messages[-1]["content"]
+            action_target = env_messages[-1]["content"]  # next action target
 
             # Update chat step index (to deal with next action)
             chat_step_idx += 2
             if chat_step_idx > len(action_trajectory):
                 done = True
 
+            # Create environment response
             new_state = ActionProcessRewardState(
                 system_prompt=self.system_prompt,
-                new_messages=new_messages,
+                new_messages=env_messages,
                 model_response=None,
                 prior_messages=current_messages,
                 tools=current_state.tools,
